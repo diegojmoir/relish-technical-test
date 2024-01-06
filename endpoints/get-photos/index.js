@@ -1,40 +1,58 @@
 const BASE_URL = 'https://jsonplaceholder.typicode.com';
-const getPhotos = async () => {
+
+const getPhotos = async ({ title = '', albumTitle = '', email = '' }) => {
     const allPhotos = await fetch(`${BASE_URL}/photos`).then((res) =>
         res.json()
     );
-    const photos = allPhotos.slice(0, 5);
+    const photos = allPhotos
+        .filter((p) => !title || p.title.includes(title))
+        .slice(0, 10);
+
     if (Array.isArray(photos)) {
-        const fetchedAlbums = {};
-        const fetchedUsers = {};
-        const promises = photos.map(async (photo) => {
-            if (!Reflect.has(fetchedAlbums, photo.albumId)) {
-                const album = await fetch(
-                    `${BASE_URL}/albums/${photo.albumId}`
-                ).then((res) => res.json());
-                Reflect.set(fetchedAlbums, photo.albumId, album);
-            }
+        const albumIds = [...new Set(photos.map((p) => p.albumId))];
+        const allAlbums = await Promise.all(
+            albumIds.map((id) => {
+                return fetch(`${BASE_URL}/albums/${id}`).then((res) =>
+                    res.json()
+                );
+            })
+        );
 
-            const album = Reflect.get(fetchedAlbums, photo.albumId);
-            if (album && !Reflect.has(fetchedUsers, album.userId)) {
-                const user = await fetch(
-                    `${BASE_URL}/users/${album.userId}`
-                ).then((res) => res.json());
-                Reflect.set(fetchedUsers, album.id, user);
-            }
+        const albums = allAlbums.filter(
+            (a) => !albumTitle || a.title.includes(albumTitle)
+        );
+        const userIds = [...new Set(albums.map((a) => a.userId))];
+        const allUsers = await Promise.all(
+            userIds.map((id) => {
+                return fetch(`${BASE_URL}/users/${id}`).then((res) =>
+                    res.json()
+                );
+            })
+        );
 
-            const user = Reflect.get(fetchedUsers, album.userId);
-            const { id, title } = album;
+        const users = allUsers.filter((u) => !email || u.email.includes(email));
+
+        const response = photos.map((photo) => {
+            const { id, title, url, albumId } = photo;
+            const album = albums.find((a) => a.id === albumId);
+            const user = users.find((u) => u.id === album?.userId);
+
             const albumWithUser = {
-                id,
-                title,
+                id: albumId,
+                title: album?.title ?? '',
                 user,
             };
-            return Object.assign(Object.assign({}, photo), {
+
+            return {
+                id,
+                title,
+                url,
                 album: albumWithUser,
-            });
+            };
         });
-        return await Promise.all(promises);
+
+        return response;
     }
 };
-getPhotos();
+
+getPhotos({ title: '' });
