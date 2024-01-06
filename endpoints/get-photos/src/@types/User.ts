@@ -1,17 +1,3 @@
-export type Photo = {
-    albumId: number;
-    id: number;
-    title: string;
-    url: string;
-    thumbnailUrl: string;
-};
-
-export type Album = {
-    userId: number;
-    id: number;
-    title: string;
-};
-
 export type User = {
     id: number;
     name: string;
@@ -41,6 +27,3 @@ export type Company = {
     catchPhrase: string;
     bs: string;
 };
-
-export type AlbumWithUser = Omit<Album, 'userId'> & { user: User };
-export type PhotoWithAlbum = Omit<Photo, 'albumId'> & { album: AlbumWithUser };
