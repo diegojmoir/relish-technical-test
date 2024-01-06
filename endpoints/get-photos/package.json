@@ -1,0 +1,19 @@
+{
+    "name": "get-photos",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.ts",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "peerDependencies": {
+        "typescript": "^5.2.2"
+    },
+    "devDependencies": {
+        "ts-node": "^10.9.2"
+    }
+}
