@@ -10,7 +10,6 @@ export const getPhotos = async ({
     limit = DEFAULT_PAGE_SIZE,
     offset = DEFAULT_PAGE_OFFSET,
 }: GetPhotosParams) => {
-    console.log(limit, offset);
     const allPhotos: Photo[] = await fetch(`${BASE_URL}/photos`).then((res) =>
         res.json()
     );

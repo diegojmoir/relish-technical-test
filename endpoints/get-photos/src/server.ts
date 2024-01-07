@@ -1,11 +1,13 @@
 import ExpressConfig from './express/express.config.js';
 import { getPhotos } from './services/photo.service.js';
 import { DEFAULT_PAGE_OFFSET, DEFAULT_PAGE_SIZE } from './utils/constants.js';
+import cors from 'cors';
 
 const app = ExpressConfig();
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log('Server Running on Port' + PORT));
+app.use(cors());
 
 app.get('/photos', async (req, res) => {
     const {
