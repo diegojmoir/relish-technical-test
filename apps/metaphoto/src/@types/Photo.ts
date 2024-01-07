@@ -41,3 +41,11 @@ export interface Company {
     catchPhrase: string;
     bs: string;
 }
+
+export type PhotoParams = {
+    title?: string;
+    albumTitle?: string;
+    email?: string;
+    limit?: string;
+    offset?: string;
+};

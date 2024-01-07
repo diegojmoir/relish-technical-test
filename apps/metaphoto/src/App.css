@@ -48,3 +48,9 @@ body {
     margin-right: auto;
     padding: 0 var(--side);
 }
+
+input {
+    color-scheme: dark;
+    --text: white;
+    --background: black;
+}
