@@ -16,7 +16,7 @@ const API_URL = import.meta.env.PROD ? 'my prod url' : 'http://localhost:5000';
 export const usePhotosStore = create<State>()(
     devtools(
         persist(
-            (set, get) => {
+            (set) => {
                 return {
                     photos: [],
                     currentPhoto: null,
@@ -27,8 +27,6 @@ export const usePhotosStore = create<State>()(
                         const res = await fetch(`${API_URL}/photos?${q}`);
                         const json = (await res.json()) as PaginatedList<Photo>;
                         const { data: photos, totalItems, currentPage } = json;
-
-                        console.log(get);
                         set(
                             { photos, totalItems, currentPage },
                             false,

@@ -3,14 +3,13 @@ import { Card } from '../components/Card';
 import { usePhotosStore } from '../store/photos';
 import { useDebounce } from '../hooks/useDebounce';
 import { DEFAULT_PAGE_SIZE, PAGE_SIZES } from '../lib/constants';
-import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 
 export const PhotoList = () => {
     const { fetchPhotos, photos, currentPage, totalItems } = usePhotosStore(
         (state) => ({
             fetchPhotos: state.fetchPhotos,
             photos: state.photos,
-            currentPage: state.currentPage + 1,
+            currentPage: state.currentPage,
             totalItems: state.totalItems,
         })
     );
@@ -24,17 +23,20 @@ export const PhotoList = () => {
     const debouncedEmail = useDebounce<string>(filterEmail, 500);
 
     const totalPages = Math.ceil(totalItems / pageSize);
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(totalPages, currentPage + 2);
+    const startPage = Math.max(1, currentPage - 1);
+    const endPage = Math.min(totalPages, currentPage + 3);
 
     useEffect(() => {
+        const offset =
+            pageSize !== DEFAULT_PAGE_SIZE ? '0' : currentPage.toString();
         fetchPhotos({
             title: debouncedTitle ?? '',
             albumTitle: debouncedAlbum ?? '',
             email: debouncedEmail ?? '',
             limit: pageSize.toString(),
-            offset: '0',
+            offset,
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedTitle, debouncedAlbum, debouncedEmail, pageSize, fetchPhotos]);
 
     const goToPage = (page: number) => {
@@ -42,7 +44,7 @@ export const PhotoList = () => {
     };
 
     const goToPreviousPage = () => {
-        const previousPage = Math.max(0, currentPage - 2);
+        const previousPage = Math.max(0, currentPage - 1);
         fetchPhotos({
             limit: pageSize.toString(),
             offset: previousPage.toString(),
@@ -50,9 +52,10 @@ export const PhotoList = () => {
     };
 
     const goToNextPage = () => {
+        const nextPage = Math.min(totalPages, currentPage + 1);
         fetchPhotos({
             limit: pageSize.toString(),
-            offset: currentPage.toString(),
+            offset: nextPage.toString(),
         });
     };
 
@@ -121,14 +124,24 @@ export const PhotoList = () => {
                         )}
                     </select>
                 </label>
-                {currentPage > 1 && (
+                {currentPage > 0 && (
                     <button
-                        className="p-2 rounded h-6 w-6 flex items-center hover:bg-blue-500"
+                        className="p-2 rounded h-6 flex items-center hover:bg-blue-500"
                         type="button"
                         title="Go to Previous Page"
                         onClick={goToPreviousPage}
                     >
-                        <ChevronLeftIcon width="18" height="18" />
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                fill="currentColor"
+                                d="M13.939 4.939L6.879 12l7.06 7.061l2.122-2.122L11.121 12l4.94-4.939z"
+                            />
+                        </svg>
                     </button>
                 )}
                 {Array.from({ length: endPage - startPage + 1 }).map(
@@ -137,9 +150,12 @@ export const PhotoList = () => {
                         return (
                             <button
                                 key={page}
-                                className={`p-2 rounded h-6 w-6 flex font-lg items-center hover:bg-blue-500 ${
-                                    currentPage === page ? 'bg-blue-500' : ''
+                                className={`p-2 rounded h-6 flex font-lg items-center hover:bg-blue-500 ${
+                                    currentPage + 1 === page
+                                        ? 'bg-blue-500'
+                                        : ''
                                 }`}
+                                title={`Go to Page ${page}`}
                                 onClick={() => goToPage(page - 1)}
                             >
                                 {page}
@@ -148,12 +164,24 @@ export const PhotoList = () => {
                     }
                 )}
 
-                {currentPage < totalPages && (
+                {currentPage < totalPages - 1 && (
                     <button
-                        className="p-2 rounded h-6 w-6 flex items-center hover:bg-blue-500"
+                        className="p-2 rounded h-6 flex items-center hover:bg-blue-500"
+                        type="button"
+                        title="Go to Next Page"
                         onClick={goToNextPage}
                     >
-                        <ChevronRightIcon width="18" height="18" />
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                fill="currentColor"
+                                d="M10.061 19.061L17.121 12l-7.06-7.061l-2.122 2.122L12.879 12l-4.94 4.939z"
+                            />
+                        </svg>
                     </button>
                 )}
             </div>
