@@ -1,3 +1,4 @@
+import { PaginatedList } from '../@types/PaginatedList';
 import { Album, GetPhotosParams, Photo, PhotoWithAlbum } from '../@types/Photo';
 import { User } from '../@types/User';
 import { BASE_URL } from '../env';
@@ -46,7 +47,7 @@ export const getPhotos = async ({
             (u) => !email || u.email.includes(email)
         );
 
-        const response: PhotoWithAlbum[] = photos.map((photo) => {
+        const enrichedData: PhotoWithAlbum[] = photos.map((photo) => {
             const { id, title, url, thumbnailUrl, albumId } = photo;
             const album = albums.find((a) => a.id === albumId);
             const user = users.find((u) => u.id === album?.userId);
@@ -65,6 +66,12 @@ export const getPhotos = async ({
                 album: albumWithUser,
             };
         });
+
+        const response: PaginatedList<PhotoWithAlbum> = {
+            data: enrichedData,
+            totalItems: allPhotos.length,
+            currentPage: offset,
+        };
 
         return response;
     }
