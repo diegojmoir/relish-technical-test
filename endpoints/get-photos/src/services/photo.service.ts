@@ -71,6 +71,7 @@ export const getPhotos = async ({
             data: enrichedData,
             totalItems: allPhotos.length,
             currentPage: offset,
+            pageSize: limit,
         };
 
         return response;
