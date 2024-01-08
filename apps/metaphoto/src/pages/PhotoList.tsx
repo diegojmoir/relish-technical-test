@@ -3,16 +3,17 @@ import { Card } from '../components/Card';
 import { usePhotosStore } from '../store/photos';
 import { useDebounce } from '../hooks/useDebounce';
 import { DEFAULT_PAGE_SIZE, PAGE_SIZES } from '../lib/constants';
+import { Spinner } from '../components/Spinner';
 
 export const PhotoList = () => {
-    const { fetchPhotos, photos, currentPage, totalItems } = usePhotosStore(
-        (state) => ({
+    const { fetchPhotos, photos, currentPage, totalItems, isLoading } =
+        usePhotosStore((state) => ({
             fetchPhotos: state.fetchPhotos,
             photos: state.photos,
             currentPage: state.currentPage,
             totalItems: state.totalItems,
-        })
-    );
+            isLoading: state.isLoading,
+        }));
 
     const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
     const [filterTitle, setFilterTitle] = useState<string>('');
@@ -58,6 +59,10 @@ export const PhotoList = () => {
             offset: nextPage.toString(),
         });
     };
+
+    if (isLoading) {
+        return <Spinner size="lg" className="h-full" />;
+    }
 
     return (
         <div className="flex flex-col gap-2">

@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { Photo } from '../@types/Photo';
-
 type CardProps = {
     photo: Photo;
 };
@@ -21,7 +20,7 @@ export const Card = ({ photo }: CardProps) => {
             <img
                 className="w-full h-auto object-cover"
                 src={photo.thumbnailUrl}
-                alt="Elephant at sunset"
+                alt={photo.title}
             />
             <figcaption className="h-12">
                 <h2 className="p-2 m-0 text-md  font-bold truncate">

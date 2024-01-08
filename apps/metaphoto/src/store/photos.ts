@@ -7,7 +7,7 @@ interface State {
     totalItems: number;
     currentPage: number;
     photos: Photo[];
-    currentPhoto: Photo | null;
+    isLoading: boolean;
     fetchPhotos: (params: PhotoParams) => Promise<void>;
 }
 
@@ -19,16 +19,22 @@ export const usePhotosStore = create<State>()(
             (set) => {
                 return {
                     photos: [],
-                    currentPhoto: null,
                     totalItems: 0,
                     currentPage: 0,
+                    isLoading: false,
                     fetchPhotos: async (params: PhotoParams) => {
+                        set({ isLoading: true }, false, 'FETCH_PHOTOS_LOADING');
                         const q = new URLSearchParams(params);
                         const res = await fetch(`${API_URL}/photos?${q}`);
                         const json = (await res.json()) as PaginatedList<Photo>;
                         const { data: photos, totalItems, currentPage } = json;
                         set(
-                            { photos, totalItems, currentPage },
+                            {
+                                photos,
+                                totalItems,
+                                currentPage,
+                                isLoading: false,
+                            },
                             false,
                             'FETCH_PHOTOS'
                         );
