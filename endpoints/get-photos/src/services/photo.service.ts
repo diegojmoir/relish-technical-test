@@ -14,12 +14,13 @@ export const getPhotos = async ({
     const allPhotos: Photo[] = await fetch(`${BASE_URL}/photos`).then((res) =>
         res.json()
     );
+    const filteredPhotos = allPhotos.filter(
+        (p) => !title || p.title.includes(title)
+    );
 
     const startIndex = offset * limit;
     const endIndex = startIndex + limit;
-    const photos: Photo[] = allPhotos
-        .slice(startIndex, endIndex)
-        .filter((p) => !title || p.title.includes(title));
+    const photos: Photo[] = filteredPhotos.slice(startIndex, endIndex);
 
     if (Array.isArray(photos)) {
         const albumIds: number[] = [...new Set(photos.map((p) => p.albumId))];
@@ -69,7 +70,7 @@ export const getPhotos = async ({
 
         const response: PaginatedList<PhotoWithAlbum> = {
             data: enrichedData,
-            totalItems: allPhotos.length,
+            totalItems: filteredPhotos.length,
             currentPage: offset,
             pageSize: limit,
         };

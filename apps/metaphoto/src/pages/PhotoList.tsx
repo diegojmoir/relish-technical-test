@@ -55,6 +55,7 @@ export const PhotoList = () => {
                         type="text"
                         placeholder="Filter by photo title"
                         name="title"
+                        value={filterTitle}
                         onChange={(e) => {
                             setFilterTitle(e.target.value);
                         }}
@@ -67,6 +68,7 @@ export const PhotoList = () => {
                         type="text"
                         placeholder="Filter by album"
                         name="album"
+                        value={filterAlbum}
                         onChange={(e) => {
                             setFilterAlbum(e.target.value);
                         }}
@@ -79,6 +81,7 @@ export const PhotoList = () => {
                         type="text"
                         placeholder="Filter by email"
                         name="email"
+                        value={filterEmail}
                         onChange={(e) => {
                             setFilterEmail(e.target.value);
                         }}
