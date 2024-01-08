@@ -13,7 +13,7 @@ export const Card = ({ photo }: CardProps) => {
 
     return (
         <figure
-            className="group border border-solid border-slate-400 rounded-lg overflow-hidden shadow cursor-pointer"
+            className="group rounded-lg overflow-hidden shadow cursor-pointer"
             title={photo.title}
             onClick={() => goToPhoto(photo.id)}
         >
