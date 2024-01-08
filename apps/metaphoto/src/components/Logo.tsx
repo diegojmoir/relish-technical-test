@@ -1,6 +1,16 @@
+import { useNavigate } from 'react-router-dom';
+
 export const Logo = () => {
+    const navigate = useNavigate();
+
+    const goToMainPage = () => {
+        navigate(`/`);
+    };
     return (
-        <div className="flex flex-col items-center justify-center text-sky-400 text-lg p-2">
+        <button
+            className="flex flex-col items-center justify-center text-sky-400 text-lg p-2"
+            onClick={goToMainPage}
+        >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -15,6 +25,6 @@ export const Logo = () => {
                 </g>
             </svg>
             <h1>MetaPhoto</h1>
-        </div>
+        </button>
     );
 };

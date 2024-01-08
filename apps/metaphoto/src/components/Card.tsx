@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Photo } from '../@types/Photo';
 
 type CardProps = {
@@ -5,10 +6,17 @@ type CardProps = {
 };
 
 export const Card = ({ photo }: CardProps) => {
+    const navigate = useNavigate();
+
+    const goToPhoto = (id: number) => {
+        navigate(`/${id}`);
+    };
+
     return (
         <figure
-            className="border border-solid border-slate-400 rounded-lg overflow-hidden shadow"
+            className="border border-solid border-slate-400 rounded-lg overflow-hidden shadow cursor-pointer"
             title={photo.title}
+            onClick={() => goToPhoto(photo.id)}
         >
             <img
                 className="w-full h-auto object-cover"
