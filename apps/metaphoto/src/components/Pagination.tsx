@@ -1,10 +1,12 @@
 import { PAGE_SIZES } from '../lib/constants';
+import { cn } from '../lib/utils';
 
 type PaginationProps = {
     refreshList: (params: Record<string, string>) => void;
     currentPage: number;
     totalItems: number;
     pageSize: number;
+    className?: string;
 };
 
 export const Pagination = ({
@@ -12,6 +14,7 @@ export const Pagination = ({
     currentPage,
     totalItems,
     pageSize,
+    className = '',
 }: PaginationProps) => {
     const totalPages = Math.ceil(totalItems / pageSize);
     const startPage = Math.max(1, currentPage - 1);
@@ -41,7 +44,12 @@ export const Pagination = ({
     };
 
     return (
-        <div className="w-full flex justify-center items-center gap-2">
+        <div
+            className={cn(
+                `w-full flex justify-center items-center gap-2`,
+                className
+            )}
+        >
             <label>
                 Page Size:
                 <select

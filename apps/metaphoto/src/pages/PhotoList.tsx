@@ -14,6 +14,7 @@ export const PhotoList = () => {
         currentPage,
         totalItems,
         pageSize,
+        error,
     } = usePhotosStore((state) => ({
         fetchPhotos: state.fetchPhotos,
         photos: state.photos,
@@ -21,6 +22,7 @@ export const PhotoList = () => {
         totalItems: state.totalItems,
         isLoading: state.isLoading,
         pageSize: state.pageSize,
+        error: state.error,
     }));
 
     const [filterTitle, setFilterTitle] = useState<string>('');
@@ -43,6 +45,14 @@ export const PhotoList = () => {
 
     if (isLoading) {
         return <Spinner size="lg" className="h-full" />;
+    }
+
+    if (error) {
+        return (
+            <div className="flex align-center justify-center text-7xl opacity-80">
+                {error}
+            </div>
+        );
     }
 
     return (
@@ -107,6 +117,7 @@ export const PhotoList = () => {
                 currentPage={currentPage}
                 totalItems={totalItems}
                 pageSize={pageSize}
+                className="p-4"
             />
         </div>
     );

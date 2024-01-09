@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { Photo, PhotoParams } from '../@types/Photo';
-import { devtools, persist } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 import { PaginatedList } from '../@types/PaginatedList';
-import { DEFAULT_PAGE_SIZE } from '../lib/constants';
+import { DEFAULT_PAGE_SIZE, ERROR_MESSAGE } from '../lib/constants';
 
 interface State {
     totalItems: number;
@@ -10,49 +10,57 @@ interface State {
     pageSize: number;
     photos: Photo[];
     isLoading: boolean;
+    error: string;
     fetchPhotos: (params: PhotoParams) => Promise<void>;
 }
 
-const API_URL = import.meta.env.PROD ? 'my prod url' : 'http://localhost:5000';
+const API_URL = import.meta.env.PROD
+    ? 'https://p6wd9jsnt4.execute-api.us-east-1.amazonaws.com/Prod'
+    : 'http://localhost:3000';
 
 export const usePhotosStore = create<State>()(
-    devtools(
-        persist(
-            (set) => {
-                return {
-                    photos: [],
-                    totalItems: 0,
-                    currentPage: 0,
-                    isLoading: false,
-                    pageSize: DEFAULT_PAGE_SIZE,
-                    fetchPhotos: async (params: PhotoParams) => {
-                        set({ isLoading: true }, false, 'FETCH_PHOTOS_LOADING');
-                        const q = new URLSearchParams(params);
-                        const res = await fetch(`${API_URL}/photos?${q}`);
-                        const json = (await res.json()) as PaginatedList<Photo>;
-                        const {
-                            data: photos,
+    devtools((set) => {
+        return {
+            photos: [],
+            totalItems: 0,
+            currentPage: 0,
+            isLoading: false,
+            error: '',
+            pageSize: DEFAULT_PAGE_SIZE,
+            fetchPhotos: async (params: PhotoParams) => {
+                try {
+                    set({ isLoading: true }, false, 'FETCH_PHOTOS_LOADING');
+                    const q = new URLSearchParams(params);
+                    const res = await fetch(`${API_URL}/photos?${q}`);
+
+                    if (!res.ok) {
+                        throw new Error();
+                    }
+                    const json = (await res.json()) as PaginatedList<Photo>;
+                    const {
+                        data: photos,
+                        totalItems,
+                        currentPage,
+                        pageSize,
+                    } = json;
+                    set(
+                        {
+                            photos,
                             totalItems,
                             currentPage,
                             pageSize,
-                        } = json;
-                        set(
-                            {
-                                photos,
-                                totalItems,
-                                currentPage,
-                                pageSize,
-                                isLoading: false,
-                            },
-                            false,
-                            'FETCH_PHOTOS'
-                        );
-                    },
-                };
+                            isLoading: false,
+                        },
+                        false,
+                        'FETCH_PHOTOS'
+                    );
+                } catch (err) {
+                    set({
+                        isLoading: false,
+                        error: ERROR_MESSAGE,
+                    });
+                }
             },
-            {
-                name: 'photos',
-            }
-        )
-    )
+        };
+    })
 );
