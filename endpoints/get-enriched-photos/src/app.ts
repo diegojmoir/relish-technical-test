@@ -3,6 +3,7 @@ import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_OFFSET, BASE_URL } from './constants';
 import { Album, Photo, PhotoWithAlbum } from './@types/Photo';
 import { User } from './@types/User';
 import { PaginatedList } from './@types/PaginatedList';
+import { get } from './utils';
 
 /**
  *
@@ -28,9 +29,7 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         const formattedLimit = +limit || DEFAULT_PAGE_SIZE;
         const formattedOffset = +offset || DEFAULT_PAGE_OFFSET;
 
-        const allPhotos: Photo[] = await fetch(`${BASE_URL}/photos`).then((res) =>
-            res.json()
-        );
+        const allPhotos: Photo[] = await get(`/photos`);
 
         const filteredPhotos = allPhotos.filter(
             (p) => !title || p.title.includes(title)
@@ -42,11 +41,7 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
 
         const albumIds: number[] = [...new Set(photos.map((p) => p.albumId))];
         const allAlbums: Album[] = await Promise.all(
-            albumIds.map((id) => {
-                return fetch(`${BASE_URL}/albums/${id}`).then((res) =>
-                    res.json()
-                );
-            })
+            albumIds.map((id) => get(`/albums/${id}`))
         );
 
         const albums: Album[] = allAlbums.filter(
@@ -54,11 +49,7 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         );
         const userIds: number[] = [...new Set(albums.map((a) => a.userId))];
         const allUsers: User[] = await Promise.all(
-            userIds.map((id) => {
-                return fetch(`${BASE_URL}/users/${id}`).then((res) =>
-                    res.json()
-                );
-            })
+            userIds.map((id) => get(`/users/${id}`))
         );
 
         const users: User[] = allUsers.filter(
