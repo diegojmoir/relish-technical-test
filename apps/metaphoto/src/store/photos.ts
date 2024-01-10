@@ -14,8 +14,8 @@ interface State {
     fetchPhotos: (params: PhotoParams) => Promise<void>;
 }
 
-const API_URL = import.meta.env.API_URL
-    ? import.meta.env.API_URL
+const API_URL = import.meta.env.VITE_API_URL
+    ? import.meta.env.VITE_API_URL
     : 'http://localhost:3000';
 
 export const usePhotosStore = create<State>()(
