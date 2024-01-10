@@ -1,31 +1,32 @@
 ---
-name: Build and Deploy React App to S3 Bucket
+name: Build and Deploy Lambda and Api Gateway
 on:
     push:
         branches: [main]
         paths:
-            - 'apps/metaphoto/**'
+            - 'endpoints/get-enriched-photos/**'
 jobs:
-    deploy-frontend:
+    deploy-lambda:
         name: Build and Deploy
         runs-on: ubuntu-latest
         defaults:
             run:
-                working-directory: ./apps/metaphoto
+                working-directory: ./apps/endpoints/get-enriched-photos
         env:
             BUCKET: metaphoto-bucket
             DIST: dist
             REGION: us-east-1
 
         steps:
-            - uses: pnpm/action-setup@v2
+            - uses: aws-actions/setup-sam@v2
               with:
-                  version: 8
+                  use-installer: true
+
             - name: Checkout
               uses: actions/checkout@v2
 
             - name: Configure AWS Credentials
-              uses: aws-actions/configure-aws-credentials@v1
+              uses: aws-actions/configure-aws-credentials@v2
               with:
                   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -38,11 +39,10 @@ jobs:
             - name: Install Dependencies
               run: |
                   node --version
-                  pnpm install
+                  npm install
 
-            - name: Build Static Website
-              run: pnpm build
+            - name: SAM Build
+              run: sam build
 
-            - name: Copy files to the production website with the AWS CLI
-              run: |
-                  aws s3 sync --delete ${{ env.DIST }} s3://${{ env.BUCKET }}
+            - name: SAM Deploy
+              run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name metaphoto-lambda-stack
