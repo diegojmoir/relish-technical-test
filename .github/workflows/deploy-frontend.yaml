@@ -12,7 +12,7 @@ jobs:
                 working-directory: ./apps/metaphoto
         env:
             BUCKET: metaphoto-bucket
-            DIST: build
+            DIST: dist
             REGION: us-east-1
 
         steps:
