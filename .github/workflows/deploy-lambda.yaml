@@ -11,7 +11,7 @@ jobs:
         runs-on: ubuntu-latest
         defaults:
             run:
-                working-directory: ./apps/endpoints/get-enriched-photos
+                working-directory: ./endpoints/get-enriched-photos
         env:
             BUCKET: metaphoto-bucket
             DIST: dist

@@ -16,45 +16,35 @@ import { get } from './utils';
  */
 
 export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    try {        
-        const queryParameters = event.queryStringParameters ?? {title: '', albumTitle: '', email: '', limit: '', offset: ''};                    
-        const {
-            title = '', 
-            albumTitle = '', 
-            email = '', 
-            limit = '', 
-            offset = '', 
-        } = queryParameters;
+    try {
+        const queryParameters = event.queryStringParameters ?? {
+            title: '',
+            albumTitle: '',
+            email: '',
+            limit: '',
+            offset: '',
+        };
+        const { title = '', albumTitle = '', email = '', limit = '', offset = '' } = queryParameters;
 
         const formattedLimit = +limit || DEFAULT_PAGE_SIZE;
         const formattedOffset = +offset || DEFAULT_PAGE_OFFSET;
 
         const allPhotos: Photo[] = await get(`/photos`);
 
-        const filteredPhotos = allPhotos.filter(
-            (p) => !title || p.title.includes(title)
-        );
+        const filteredPhotos = allPhotos.filter((p) => !title || p.title.includes(title));
 
         const startIndex = formattedOffset * formattedLimit;
         const endIndex = startIndex + formattedLimit;
         const photos: Photo[] = filteredPhotos.slice(startIndex, endIndex);
 
         const albumIds: number[] = [...new Set(photos.map((p) => p.albumId))];
-        const allAlbums: Album[] = await Promise.all(
-            albumIds.map((id) => get(`/albums/${id}`))
-        );
+        const allAlbums: Album[] = await Promise.all(albumIds.map((id) => get(`/albums/${id}`)));
 
-        const albums: Album[] = allAlbums.filter(
-            (a) => !albumTitle || a.title.includes(albumTitle)
-        );
+        const albums: Album[] = allAlbums.filter((a) => !albumTitle || a.title.includes(albumTitle));
         const userIds: number[] = [...new Set(albums.map((a) => a.userId))];
-        const allUsers: User[] = await Promise.all(
-            userIds.map((id) => get(`/users/${id}`))
-        );
+        const allUsers: User[] = await Promise.all(userIds.map((id) => get(`/users/${id}`)));
 
-        const users: User[] = allUsers.filter(
-            (u) => !email || u.email.includes(email)
-        );
+        const users: User[] = allUsers.filter((u) => !email || u.email.includes(email));
 
         const enrichedData: PhotoWithAlbum[] = photos.map((photo) => {
             const { id, title, url, thumbnailUrl, albumId } = photo;
@@ -84,16 +74,15 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         };
 
         return {
-            statusCode: 200, 
-            body: JSON.stringify(response)
-        };        
-
+            statusCode: 200,
+            body: JSON.stringify(response),
+        };
     } catch (err) {
         console.log(err);
         return {
             statusCode: 500,
             body: JSON.stringify({
-                message: 'some error happened',
+                message: 'Something went wrong while retrieving the data',
             }),
         };
     }
