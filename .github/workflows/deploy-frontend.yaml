@@ -16,6 +16,9 @@ jobs:
             REGION: us-east-1
 
         steps:
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 8
             - name: Checkout
               uses: actions/checkout@v2
 
@@ -33,7 +36,7 @@ jobs:
             - name: Install Dependencies
               run: |
                   node --version
-                  npm ci --production
+                  npm install
 
             - name: Build Static Website
               run: npm run build
