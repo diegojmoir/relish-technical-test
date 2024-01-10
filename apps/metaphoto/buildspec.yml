@@ -1,0 +1,17 @@
+version: 0.2
+phases:
+    pre_build:
+        commands:
+            - cd apps
+            - cd metaphoto
+            #installs dependencies for the code
+            - npm install
+    build:
+        commands:
+            # builds a code in a folder called dist
+            - npm run build
+    post_build:
+        commands:
+artifacts:
+    files:
+        - '**/*'
