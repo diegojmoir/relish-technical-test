@@ -7,7 +7,9 @@ export async function get(endpoint: string, params?: Record<string, string>) {
 
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error('Something went wrong while retrieving information');
+            throw new Error(
+                'Something went wrong while retrieving information'
+            );
         }
 
         const data = await response.json();
