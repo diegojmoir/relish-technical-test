@@ -6,7 +6,7 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
     Function:
-        Timeout: 3
+        Timeout: 30
 
 Resources:
     GetPhotosFunction:
@@ -23,6 +23,12 @@ Resources:
                     Properties:
                         Path: /photos
                         Method: get
+                        RequestParameters:
+                            - method.request.querystring.title
+                            - method.request.querystring.albumTitle
+                            - method.request.querystring.email
+                            - method.request.querystring.limit
+                            - method.request.querystring.offset
         Metadata: # Manage esbuild properties
             BuildMethod: esbuild
             BuildProperties:

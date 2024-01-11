@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_OFFSET, BASE_URL } from './constants';
+import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_OFFSET } from './constants';
 import { Album, Photo, PhotoWithAlbum } from './@types/Photo';
 import { User } from './@types/User';
 import { PaginatedList } from './@types/PaginatedList';

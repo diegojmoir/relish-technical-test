@@ -27,6 +27,7 @@ jobs:
             BUCKET: metaphoto-bucket
             DIST: dist
             REGION: us-east-1
+            API_URL: https://9c14ievh5a.execute-api.us-east-1.amazonaws.com/Prod/photos
 
         steps:
             - uses: pnpm/action-setup@v2
