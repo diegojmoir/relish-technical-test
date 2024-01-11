@@ -39,17 +39,21 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
 
         const albumIds: number[] = [...new Set(photos.map((p) => p.albumId))];
         const allAlbums: Album[] = await Promise.all(albumIds.map((id) => get(`/albums/${id}`)));
-
         const albums: Album[] = allAlbums.filter((a) => !albumTitle || a.title.includes(albumTitle));
+
         const userIds: number[] = [...new Set(albums.map((a) => a.userId))];
         const allUsers: User[] = await Promise.all(userIds.map((id) => get(`/users/${id}`)));
-
         const users: User[] = allUsers.filter((u) => !email || u.email.includes(email));
 
-        const enrichedData: PhotoWithAlbum[] = photos.map((photo) => {
+        const enrichedData: PhotoWithAlbum[] = [];
+        photos.forEach((photo) => {
             const { id, title, url, thumbnailUrl, albumId } = photo;
             const album = albums.find((a) => a.id === albumId);
             const user = users.find((u) => u.id === album?.userId);
+
+            if (!album || !user) {
+                return;
+            }
 
             const albumWithUser = {
                 id: albumId,
@@ -57,13 +61,15 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
                 user,
             };
 
-            return {
+            const enrichedPhoto = {
                 id,
                 title,
                 url,
                 thumbnailUrl,
                 album: albumWithUser,
             };
+
+            enrichedData.push(enrichedPhoto);
         });
 
         const response: PaginatedList<PhotoWithAlbum> = {
@@ -83,7 +89,6 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
             body: JSON.stringify(response),
         };
     } catch (err) {
-        console.log(err);
         return {
             statusCode: 500,
             body: JSON.stringify({
