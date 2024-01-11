@@ -5,6 +5,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import { DEBOUNCE_TIME_MS } from '../lib/constants';
 import { Spinner } from '../components/Spinner';
 import { Pagination } from '../components/Pagination';
+import { PhotoFilters } from '../@types/Photo';
 
 export const PhotoList = () => {
     const {
@@ -25,23 +26,27 @@ export const PhotoList = () => {
         error: state.error,
     }));
 
-    const [filterTitle, setFilterTitle] = useState<string>('');
-    const [filterAlbum, setFilterAlbum] = useState<string>('');
-    const [filterEmail, setFilterEmail] = useState<string>('');
-    const debouncedTitle = useDebounce<string>(filterTitle, DEBOUNCE_TIME_MS);
-    const debouncedAlbum = useDebounce<string>(filterAlbum, DEBOUNCE_TIME_MS);
-    const debouncedEmail = useDebounce<string>(filterEmail, DEBOUNCE_TIME_MS);
+    const [filters, setFilters] = useState<PhotoFilters>({
+        title: '',
+        email: '',
+        albumTitle: '',
+    });
+    const debouncedFilters = useDebounce<PhotoFilters>(
+        filters,
+        DEBOUNCE_TIME_MS
+    );
 
     useEffect(() => {
+        const { title, email, albumTitle } = debouncedFilters;
         fetchPhotos({
-            title: debouncedTitle ?? '',
-            albumTitle: debouncedAlbum ?? '',
-            email: debouncedEmail ?? '',
+            title,
+            albumTitle,
+            email,
             limit: pageSize.toString(),
             offset: currentPage.toString(),
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedTitle, debouncedAlbum, debouncedEmail, fetchPhotos]);
+    }, [debouncedFilters, fetchPhotos]);
 
     if (isLoading) {
         return <Spinner size="lg" className="h-full" />;
@@ -57,46 +62,43 @@ export const PhotoList = () => {
 
     return (
         <div className="flex flex-col gap-2">
-            <div className="flex gap-2">
-                <label>
-                    Title:
-                    <input
-                        className="ml-1 p-0.5"
-                        type="text"
-                        placeholder="Filter by photo title"
-                        name="title"
-                        value={filterTitle}
-                        onChange={(e) => {
-                            setFilterTitle(e.target.value);
-                        }}
-                    />
-                </label>
-                <label>
-                    Album:
-                    <input
-                        className="ml-1 p-0.5"
-                        type="text"
-                        placeholder="Filter by album"
-                        name="album"
-                        value={filterAlbum}
-                        onChange={(e) => {
-                            setFilterAlbum(e.target.value);
-                        }}
-                    />
-                </label>
-                <label>
-                    Email:
-                    <input
-                        className="ml-1 p-0.5"
-                        type="text"
-                        placeholder="Filter by email"
-                        name="email"
-                        value={filterEmail}
-                        onChange={(e) => {
-                            setFilterEmail(e.target.value);
-                        }}
-                    />
-                </label>
+            <div className="flex flex-col md:flex-row gap-2">
+                <label htmlFor="titleFilter">Title:</label>
+                <input
+                    id="titleFilter"
+                    className="p-0.5"
+                    type="text"
+                    placeholder="Filter by photo title"
+                    name="title"
+                    value={filters.title}
+                    onChange={(e) => {
+                        setFilters({ ...filters, title: e.target.value });
+                    }}
+                />
+                <label htmlFor="albumFilter">Album:</label>
+                <input
+                    id="albumFilter"
+                    className="p-0.5"
+                    type="text"
+                    placeholder="Filter by album"
+                    name="album"
+                    value={filters.albumTitle}
+                    onChange={(e) => {
+                        setFilters({ ...filters, albumTitle: e.target.value });
+                    }}
+                />
+                <label htmlFor="emailFilter">Email:</label>
+                <input
+                    id="emailFilter"
+                    className="p-0.5"
+                    type="text"
+                    placeholder="Filter by email"
+                    name="email"
+                    value={filters.email}
+                    onChange={(e) => {
+                        setFilters({ ...filters, email: e.target.value });
+                    }}
+                />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {photos.map((photo) => (
@@ -106,10 +108,11 @@ export const PhotoList = () => {
 
             <Pagination
                 refreshList={({ limit, offset }) => {
+                    const { title, email, albumTitle } = debouncedFilters;
                     return fetchPhotos({
-                        title: debouncedTitle ?? '',
-                        albumTitle: debouncedAlbum ?? '',
-                        email: debouncedEmail ?? '',
+                        title,
+                        albumTitle,
+                        email,
                         limit,
                         offset,
                     });

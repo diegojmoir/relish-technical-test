@@ -42,10 +42,13 @@ export interface Company {
     bs: string;
 }
 
-export type PhotoParams = {
+export type PhotoFilters = {
     title?: string;
     albumTitle?: string;
     email?: string;
+};
+
+export type PhotoParams = PhotoFilters & {
     limit?: string;
     offset?: string;
 };
