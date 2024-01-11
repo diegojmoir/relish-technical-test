@@ -56,4 +56,4 @@ jobs:
               run: sam build
 
             - name: SAM Deploy
-              run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name metaphoto-lambda-stack
+              run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name metaphoto-lambda-stack ---region ${{ env.REGION }}  --s3-bucket
