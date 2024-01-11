@@ -75,6 +75,11 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
 
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET,OPTIONS',
+            },
             body: JSON.stringify(response),
         };
     } catch (err) {

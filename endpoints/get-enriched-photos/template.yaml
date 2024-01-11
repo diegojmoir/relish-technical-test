@@ -11,7 +11,8 @@ Globals:
             AllowHeaders: "'*'"
             AllowOrigin: "'*'"
     Function:
-        Timeout: 30
+        Timeout: 60
+        MemorySize: 128
 
 Resources:
     GetPhotosFunction:
