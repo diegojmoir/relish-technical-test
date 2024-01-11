@@ -11,5 +11,7 @@
         "sourceType": "module"
     },
     "plugins": ["@typescript-eslint", "react"],
-    "rules": {}
+    "rules": {
+        "no-useless-catch": "off"
+    }
 }

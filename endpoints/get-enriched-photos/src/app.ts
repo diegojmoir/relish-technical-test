@@ -15,7 +15,9 @@ import { get } from './utils';
  *
  */
 
-export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const lambdaHandler = async (
+    event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
     try {
         const queryParameters = event.queryStringParameters ?? {
             title: '',
@@ -24,26 +26,42 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
             limit: '',
             offset: '',
         };
-        const { title = '', albumTitle = '', email = '', limit = '', offset = '' } = queryParameters;
+        const {
+            title = '',
+            albumTitle = '',
+            email = '',
+            limit = '',
+            offset = '',
+        } = queryParameters;
 
         const formattedLimit = +limit || DEFAULT_PAGE_SIZE;
         const formattedOffset = +offset || DEFAULT_PAGE_OFFSET;
 
         const allPhotos: Photo[] = await get(`/photos`);
 
-        const filteredPhotos = allPhotos.filter((p) => !title || p.title.includes(title));
+        const filteredPhotos = allPhotos.filter(
+            (p) => !title || p.title.includes(title)
+        );
 
         const startIndex = formattedOffset * formattedLimit;
         const endIndex = startIndex + formattedLimit;
         const photos: Photo[] = filteredPhotos.slice(startIndex, endIndex);
 
         const albumIds: number[] = [...new Set(photos.map((p) => p.albumId))];
-        const allAlbums: Album[] = await Promise.all(albumIds.map((id) => get(`/albums/${id}`)));
-        const albums: Album[] = allAlbums.filter((a) => !albumTitle || a.title.includes(albumTitle));
+        const allAlbums: Album[] = await Promise.all(
+            albumIds.map((id) => get(`/albums/${id}`))
+        );
+        const albums: Album[] = allAlbums.filter(
+            (a) => !albumTitle || a.title.includes(albumTitle)
+        );
 
         const userIds: number[] = [...new Set(albums.map((a) => a.userId))];
-        const allUsers: User[] = await Promise.all(userIds.map((id) => get(`/users/${id}`)));
-        const users: User[] = allUsers.filter((u) => !email || u.email.includes(email));
+        const allUsers: User[] = await Promise.all(
+            userIds.map((id) => get(`/users/${id}`))
+        );
+        const users: User[] = allUsers.filter(
+            (u) => !email || u.email.includes(email)
+        );
 
         const enrichedData: PhotoWithAlbum[] = [];
         photos.forEach((photo) => {
