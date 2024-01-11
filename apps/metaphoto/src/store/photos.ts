@@ -11,7 +11,9 @@ interface State {
     photos: Photo[];
     isLoading: boolean;
     error: string;
+    currentPhoto: Photo | null;
     fetchPhotos: (params: PhotoParams) => Promise<void>;
+    fetchPhotoById(id: number): Promise<void>;
 }
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -19,7 +21,7 @@ const API_URL = import.meta.env.VITE_API_URL
     : 'http://localhost:3000';
 
 export const usePhotosStore = create<State>()(
-    devtools((set) => {
+    devtools((set, get) => {
         return {
             photos: [],
             totalItems: 0,
@@ -27,6 +29,7 @@ export const usePhotosStore = create<State>()(
             isLoading: false,
             error: '',
             pageSize: DEFAULT_PAGE_SIZE,
+            currentPhoto: null,
             fetchPhotos: async (params: PhotoParams) => {
                 try {
                     set({ isLoading: true }, false, 'FETCH_PHOTOS_LOADING');
@@ -53,6 +56,42 @@ export const usePhotosStore = create<State>()(
                         },
                         false,
                         'FETCH_PHOTOS'
+                    );
+                } catch (err) {
+                    set({
+                        isLoading: false,
+                        error: ERROR_MESSAGE,
+                    });
+                }
+            },
+            fetchPhotoById: async (id: number) => {
+                try {
+                    const { photos } = get();
+                    const storedPhoto = photos.find((p) => p.id === id);
+                    if (storedPhoto) {
+                        set({ currentPhoto: storedPhoto });
+                        return;
+                    }
+
+                    set(
+                        { isLoading: true },
+                        false,
+                        'FETCH_GET_PHOTO_BY_ID_LOADING'
+                    );
+                    const res = await fetch(`${API_URL}/photos/${id}`);
+
+                    if (!res.ok) {
+                        throw new Error();
+                    }
+
+                    const photo = (await res.json()) as Photo;
+                    set(
+                        {
+                            currentPhoto: photo,
+                            isLoading: false,
+                        },
+                        false,
+                        'FETCH_GET_PHOTO_BY_ID'
                     );
                 } catch (err) {
                     set({

@@ -1,52 +1,25 @@
-import { useEffect, useState } from 'react';
 import { Card } from '../components/Card';
-import { usePhotosStore } from '../store/photos';
-import { useDebounce } from '../hooks/useDebounce';
-import { DEBOUNCE_TIME_MS } from '../lib/constants';
 import { Spinner } from '../components/Spinner';
 import { Pagination } from '../components/Pagination';
 import { PhotoFilters } from '../@types/Photo';
+import { usePhotoList } from '../hooks/usePhotoList';
+import { useState } from 'react';
 
 export const PhotoList = () => {
-    const {
-        fetchPhotos,
-        photos,
-        isLoading,
-        currentPage,
-        totalItems,
-        pageSize,
-        error,
-    } = usePhotosStore((state) => ({
-        fetchPhotos: state.fetchPhotos,
-        photos: state.photos,
-        currentPage: state.currentPage,
-        totalItems: state.totalItems,
-        isLoading: state.isLoading,
-        pageSize: state.pageSize,
-        error: state.error,
-    }));
-
     const [filters, setFilters] = useState<PhotoFilters>({
         title: '',
         email: '',
         albumTitle: '',
     });
-    const debouncedFilters = useDebounce<PhotoFilters>(
-        filters,
-        DEBOUNCE_TIME_MS
-    );
-
-    useEffect(() => {
-        const { title, email, albumTitle } = debouncedFilters;
-        fetchPhotos({
-            title,
-            albumTitle,
-            email,
-            limit: pageSize.toString(),
-            offset: currentPage.toString(),
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedFilters, fetchPhotos]);
+    const {
+        photos,
+        isLoading,
+        error,
+        fetchPhotos,
+        totalItems,
+        currentPage,
+        pageSize,
+    } = usePhotoList({ filters });
 
     if (isLoading) {
         return <Spinner size="lg" className="h-full" />;
@@ -108,7 +81,7 @@ export const PhotoList = () => {
 
             <Pagination
                 refreshList={({ limit, offset }) => {
-                    const { title, email, albumTitle } = debouncedFilters;
+                    const { title, email, albumTitle } = filters;
                     return fetchPhotos({
                         title,
                         albumTitle,

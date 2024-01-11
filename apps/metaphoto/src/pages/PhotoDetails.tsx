@@ -1,13 +1,16 @@
 import { useParams } from 'react-router-dom';
-import { usePhotosStore } from '../store/photos';
+import { Spinner } from '../components/Spinner';
+import { useCurrentPhoto } from '../hooks/useCurrentPhoto';
 
 export const PhotoDetails = () => {
-    const { id = -1 } = useParams();
-    const { photo } = usePhotosStore((state) => ({
-        photo: state.photos.find((x) => x.id === +id),
-    }));
+    const { id = '' } = useParams();
+    const { photo, error, isLoading } = useCurrentPhoto({ id: +id });
 
-    if (!photo) {
+    if (isLoading) {
+        return <Spinner size="lg" className="h-full" />;
+    }
+
+    if (!photo || error) {
         return (
             <div className="flex align-center justify-center text-7xl opacity-80">
                 Photo not found :(
