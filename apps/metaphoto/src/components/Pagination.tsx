@@ -43,6 +43,10 @@ export const Pagination = ({
         });
     };
 
+    if (totalItems === 0) {
+        return null;
+    }
+
     return (
         <div className={cn(`w-full flex  gap-2`, className)}>
             <div className="flex basis-full justify-center items-center">
