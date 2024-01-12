@@ -1,5 +1,7 @@
 # Metaphoto
+This monorepo serves as a centralized workspace leveraging PNPM for managing dependencies. It encompasses web applications within the `apps` directory and Lambda serverless functions in the `endpoints` directory. With PNPM workspaces, development is streamlined, and shared dependencies are efficiently managed. GitHub Actions are configured for automated deployments, ensuring seamless integration and delivery. Explore the project structure, utilize provided scripts, and contribute to this collaborative development environment.
 
+[Metaphoto Website](http://metaphoto-bucket.s3-website-us-east-1.amazonaws.com/)
 ## Prerequisites
 Ensure that you have the following installed on your machine:
 
