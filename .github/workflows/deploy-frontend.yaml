@@ -24,10 +24,10 @@ jobs:
             run:
                 working-directory: ./apps/metaphoto
         env:
-            BUCKET: metaphoto-bucket
+            BUCKET: ${{vars.AWS_BUCKET_NAME}}
             DIST: dist
-            REGION: us-east-1
-            VITE_API_URL: https://9c14ievh5a.execute-api.us-east-1.amazonaws.com/Prod
+            REGION: ${{vars.AWS_REGION}}
+            VITE_API_URL: ${{vars.API_URL}}
 
         steps:
             - uses: pnpm/action-setup@v2
