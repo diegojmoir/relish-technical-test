@@ -1,4 +1,32 @@
-# React + TypeScript + Vite
+# React + TypeScript + Vite + PNPM
+
+## Prerequisites
+Ensure that you have the following installed on your machine:
+
+[Node.js (18.x or higher)](https://nodejs.org/en)
+
+[PNPM](https://pnpm.io/cli/install)
+
+[Vite](https://vitejs.dev/)
+
+
+## Getting Started
+### Install Dependencies:
+On the root of the project: `pnpm install`
+
+`cd apps/metaphoto`
+`pnpm install`
+
+### Start the Development Server:
+`pnpm dev`
+
+### Technologies Used
+* React
+* Typescript
+* Vite
+* PNPM
+* Tailwind CSS
+* Zustand
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
