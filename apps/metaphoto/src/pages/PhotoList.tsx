@@ -33,6 +33,14 @@ export const PhotoList = () => {
         );
     }
 
+    if(photos.length === 0) {
+        return (
+            <div className="flex align-center justify-center text-7xl opacity-80">
+                No photos were found, please try again with different filters.
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col gap-2">
             <div className="flex flex-col md:flex-row gap-2">

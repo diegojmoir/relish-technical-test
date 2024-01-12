@@ -17,3 +17,5 @@ export async function get(endpoint: string, params?: Record<string, string>) {
         throw err;
     }
 }
+
+export const isIncluded = (value: string, filter: string) => !filter || value.toLocaleLowerCase().includes(filter.toLocaleLowerCase())

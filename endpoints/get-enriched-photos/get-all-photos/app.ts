@@ -3,7 +3,7 @@ import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_OFFSET } from './constants';
 import { Album, Photo, PhotoWithAlbum } from './@types/Photo';
 import { User } from './@types/User';
 import { PaginatedList } from './@types/PaginatedList';
-import { get } from './utils';
+import { get, isIncluded } from './utils';
 
 /**
  *
@@ -40,7 +40,7 @@ export const lambdaHandler = async (
         const allPhotos: Photo[] = await get(`/photos`);
 
         const filteredPhotos = allPhotos.filter(
-            (p) => !title || p.title.includes(title)
+            (p) => isIncluded(p.title, title)
         );
 
         const startIndex = formattedOffset * formattedLimit;
@@ -52,7 +52,7 @@ export const lambdaHandler = async (
             albumIds.map((id) => get(`/albums/${id}`))
         );
         const albums: Album[] = allAlbums.filter(
-            (a) => !albumTitle || a.title.includes(albumTitle)
+            (a) => isIncluded(a.title, albumTitle)
         );
 
         const userIds: number[] = [...new Set(albums.map((a) => a.userId))];
@@ -60,7 +60,7 @@ export const lambdaHandler = async (
             userIds.map((id) => get(`/users/${id}`))
         );
         const users: User[] = allUsers.filter(
-            (u) => !email || u.email.includes(email)
+            (u) => isIncluded(u.email, email)
         );
 
         const enrichedData: PhotoWithAlbum[] = [];
