@@ -25,9 +25,15 @@ pnpm -v
 - `endpoints/`: Contains serverless functions.
 
 ## Github Actions
-This repository is configured with GitHub Actions for automated deployment. The configurations file expect the repository to have the following [secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) configured to authenticate with AWS and deploy the applications:
-- AWS_ACCESS_KEY_ID
-- AWS_SECRET_ACCESS_KEY
+This repository is configured with GitHub Actions for automated deployment. 
+The configuration files expect the repository to have the following [secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) and [variables](https://docs.github.com/en/actions/learn-github-actions/variables#passing-values-between-steps-and-jobs-in-a-workflow) configured to authenticate with AWS and deploy the applications:
+- Secrets
+   - AWS_ACCESS_KEY_ID
+   - AWS_SECRET_ACCESS_KEY
+- Variables
+   - API_URL
+   - AWS_BUCKET_NAME (Used to deploy the frontend)
+   - AWS_BUCKET_NAME
   
 The configuration files can be found in the .github/workflows/ directory:
 - `deploy-frontend.yaml`: Only triggers when a file on the path: `apps/metaphoto/**` is modified.  
